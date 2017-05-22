@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import codecs
 import re
-
+import copy
 
 def getlist():
     arealist = getarealist()
@@ -16,8 +16,8 @@ def getlist():
             if row[5] == '1': # 気象警報で使用
                 split = re.match(u"気象庁予報警報規程別表", row[1]) is not None
 
-                code = row[0]
-                data[code] = arealist[row[4]]
+                code = str(row[0])
+                data[code] = copy.deepcopy(arealist[row[4]])
 
                 data[code]['name'] = row[2]
                 data[code]['splitArea'] = split
