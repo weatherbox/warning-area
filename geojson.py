@@ -26,12 +26,23 @@ def main():
             parent_code = str(code[:3]) + '0000'
 
             if jma_code in citylist:
-                pass
+                append_feature(cities, jma_code, feature)
+
             else:
                 if parent_code in citylist:
-                    print parent_code, citylist[parent_code]['name']
+                    append_feature(cities, parent_code, feature)
+
                 else:
-                    print city_name, name
+                    #print city_name, name
+                    pass
+
+    print len(cities)
+
+def append_feature(cities, code, feature):
+    if not code in cities:
+        cities[code] = []
+
+    cities[code].append(feature)
 
 
 if __name__ == '__main__':
