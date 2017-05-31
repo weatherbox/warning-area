@@ -30,11 +30,12 @@ def load_geojson(citylist):
             parent_code = str(code[:3]) + '0000'
 
             if jma_code in citylist:
-                append_feature(cities, jma_code, feature)
+                append_geometry(cities, jma_code, feature)
 
             else:
                 if parent_code in citylist:
-                    append_feature(cities, parent_code, feature)
+                    #append_feature(cities, parent_code, feature)
+                    pass
 
                 else:
                     #print city_name, name
@@ -46,24 +47,28 @@ def output_geojson(cities, citylist):
     print 'cities:' + str(len(cities))
     for code in cities.keys():
         if code == '0120200':
-            create_geojson(code, cities[code])
+            create_city_geojson(code, cities[code], citylist)
 
 
-def append_feature(cities, code, feature):
+def append_geometry(cities, code, feature):
     if not code in cities:
         cities[code] = []
 
-    cities[code].append(feature)
+    cities[code].append(feature['geometry']['coordinates'])
 
 
-def create_geojson(code, feature):
-    geojson = {
-        'type': 'FeatureCollection',
-        'features': feature
+def create_city_geojson(code, polygons, citylist):
+    feature = {
+        'type': 'Feature',
+        'properties': citylist[code],
+        'geometry': {
+            'type': 'MultiPolygon',
+            'coordinates': polygons
+        }
     }
 
     with open(code + '.json', 'w') as f:
-        json_str = json.dumps(geojson, ensure_ascii=False)
+        json_str = json.dumps(feature, ensure_ascii=False)
         f.write(json_str.encode('utf-8'))
 
 
