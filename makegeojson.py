@@ -63,7 +63,7 @@ def get_parent_code(code):
         return code[:4] + '000'
 
     elif code[:4] == '2213': # 浜松市
-        if code == '2213700':
+        if code == '22137':
             return '2213002' # 浜松市北部
         else:
             return '2213001' # 浜松市南部
