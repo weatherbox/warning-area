@@ -20,7 +20,8 @@ def getlist():
                 data[code] = copy.deepcopy(arealist[row[4]])
 
                 data[code]['name'] = row[2]
-                data[code]['splitArea'] = split
+                data[code]['code'] = code
+                #data[code]['splitArea'] = split
 
         return data
 

@@ -2,6 +2,10 @@
 import json
 import codecs
 
+import geojson
+import shapely.geometry
+import shapely.ops
+
 import citycode
 
 
@@ -34,8 +38,7 @@ def load_geojson(citylist):
 
             else:
                 if parent_code in citylist:
-                    #append_feature(cities, parent_code, feature)
-                    pass
+                    append_geometry(cities, parent_code, feature)
 
                 else:
                     #print city_name, name
@@ -46,7 +49,7 @@ def load_geojson(citylist):
 def output_geojson(cities, citylist):
     print 'cities:' + str(len(cities))
     for code in cities.keys():
-        if code == '0120200':
+        if code[:2] == '01':
             create_city_geojson(code, cities[code], citylist)
 
 
@@ -54,21 +57,16 @@ def append_geometry(cities, code, feature):
     if not code in cities:
         cities[code] = []
 
-    cities[code].append(feature['geometry']['coordinates'])
+    poly = shapely.geometry.asShape(feature['geometry'])
+    cities[code].append(poly)
 
 
 def create_city_geojson(code, polygons, citylist):
-    feature = {
-        'type': 'Feature',
-        'properties': citylist[code],
-        'geometry': {
-            'type': 'MultiPolygon',
-            'coordinates': polygons
-        }
-    }
+    geometry = shapely.ops.cascaded_union(polygons)
+    feature = geojson.Feature(geometry=geometry, properties=citylist[code])
 
-    with open(code + '.json', 'w') as f:
-        json_str = json.dumps(feature, ensure_ascii=False)
+    with open('geojson/' + code + '.json', 'w') as f:
+        json_str = geojson.dumps(feature, ensure_ascii=False)
         f.write(json_str.encode('utf-8'))
 
 
