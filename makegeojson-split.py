@@ -60,19 +60,71 @@ split_areas = [
     #['01346', split01346],
 ]
 
+
+
+
 def main():
     for area in split_areas:
         areas = {}
         geojson = estat.get_geojson(area[0])
-        load_geojson(geojson, area[1])
+        load_geojson(geojson, area[1], areas)
+        output_geojson(areas)
+
+
+def split_sendai():
+    areas = {}
+
+    geojson1 = estat.get_geojson('04101')
+    load_geojson(geojson1, split04101, areas)
+
+    geojson2 = estat.get_geojson('04102')
+    load_geojson(geojson2, split0410001, areas)
+
+    geojson3 = estat.get_geojson('04103')
+    load_geojson(geojson3, split0410001, areas)
+
+    geojson4 = estat.get_geojson('04104')
+    load_geojson(geojson4, split04104, areas)
+
+    geojson5 = estat.get_geojson('04105')
+    load_geojson(geojson5, split0410002, areas)
+
+    output_geojson(areas)
+
+
+def split04101(name, code): # 青葉区
+    # 宮城総合支所
+    # source http://www.city.sendai.jp/aoba-kusesuishin/aobaku/shokai/profile/shokankuiki.html
+    miyagi = [u'赤坂', u'愛子中央', u'愛子東', u'芋沢', u'大倉', u'落合', u'上愛子', u'国見ケ丘', u'熊ケ根', u'栗生', u'郷六', u'作並', u'下愛子', u'高野原', u'中山台', u'中山台西', u'中山吉成', u'錦ケ丘', u'ニツカ', u'新川', u'南吉成', u'みやぎ台', u'向田', u'吉成', u'吉成台', u'臨済院']
+
+    if name in miyagi:
+        return '0410002' # 仙台市西部
+
+    elif name[-2:] == u'丁目' and name[:-3] in miyagi:
+        return '0410002' # 仙台市西部
+
+    else:
+        return '0410001' # 仙台市東部
+
+def split04104(name, code): # 太白区
+    # 秋保総合支所
+    if name[:3] in u'秋保町':
+        return '0410002' # 仙台市西部
+
+    else:
+        return '0410001' # 仙台市東部
+
+def split0410001(name, code): # 宮城野区, 若林区
+    return '0410001' # 仙台市東部
+
+def split0410002(name, code): # 泉区
+    return '0410002' # 仙台市西部
 
 
 
-
-def load_geojson(filename, split_func):
+def load_geojson(filename, split_func, areas):
     with open(filename) as f:
         data = json.loads(f.read(), 'utf-8')
-        areas = {}
 
         # append splited polygons
         for feature in data['features']:
@@ -90,8 +142,6 @@ def load_geojson(filename, split_func):
             print area_name, area_code
             code = split_func(area_name, area_code)
             append_geometry(areas, code, feature)
-
-        output_geojson(areas)
 
 
 def append_geometry(areas, code, feature):
@@ -118,6 +168,7 @@ def create_city_geojson(code, polygons, meta):
     return feature
 
 if __name__ == '__main__':
-    main()
+    #main()
+    split_sendai()
 
 
