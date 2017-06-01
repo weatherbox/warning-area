@@ -11,14 +11,30 @@ import estat
 
 citylist = citycode.getlist()
 
-def split01484(area_name):
-    if area_name[2:4] == u'焼尻' or area_name[2:4] == u'天売':
+def split01484(name, code):
+    if name[2:4] == u'焼尻' or name[2:4] == u'天売':
         return '0148402' # 天売焼尻
     else:
         return '0148401' # 羽幌町
 
+def split01206(name, code):
+    if name[:3] == u'阿寒町':
+        return '0120602'
+    elif name[:3] == u'音別町':
+        return '0120603'
+    else:
+        return '0120601' # 釧路市釧路
+
+def split01208(name, code):
+    if int(code) > 1200: # 北見市常呂
+        return '0120802'
+    else:
+        return '0120801' # 北見市北見
+
 split_areas = [
-    ['01484', split01484],
+    #['01484', split01484],
+    #['01206', split01206],
+    ['01208', split01208],
 ]
 
 def main():
@@ -42,9 +58,13 @@ def load_geojson(filename, split_func):
             
             city_name = feature['properties']['CSS_NAME']
             area_name = feature['properties']['MOJI']
+            area_code = feature['properties']['KIHON1']
 
-            print area_name
-            code = split_func(area_name)
+            if area_name[-4:] == u'（湖面）':
+                continue
+
+            print area_name, area_code
+            code = split_func(area_name, area_code)
             append_geometry(areas, code, feature)
 
         output_geojson(areas)
