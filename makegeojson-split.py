@@ -31,14 +31,38 @@ def split01208(name, code):
     else:
         return '0120801' # 北見市北見
 
+def split01233(name, code):
+    if int(code) > 400: # 伊達市大滝
+        return '0123302'
+    else:
+        return '0123301' # 伊達市伊達
+
+def split01601(name, code):
+    if int(code) <= 40 :
+        return '0160101' # 日高町日高
+    else:
+        return '0160102' # 日高町門別
+
+def split01346(name, code):
+    if name[:2] == u'熊石':
+        return '0134602' # 八雲町熊石
+    else:
+        return '0134601' # 八雲町八雲
+
+
+
 split_areas = [
     #['01484', split01484],
     #['01206', split01206],
-    ['01208', split01208],
+    #['01208', split01208],
+    #['01233', split01233],
+    #['01601', split01601],
+    #['01346', split01346],
 ]
 
 def main():
     for area in split_areas:
+        areas = {}
         geojson = estat.get_geojson(area[0])
         load_geojson(geojson, area[1])
 
