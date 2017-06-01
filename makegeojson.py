@@ -74,10 +74,17 @@ def get_parent_code(code):
 
 def output_geojson(cities, citylist):
     print 'cities:' + str(len(cities))
-    for code in cities.keys():
-        if code[:2] == '01':
-            create_city_geojson(code, cities[code], citylist)
+    collection = []
 
+    for code in cities.keys():
+        if code[:2] == '22':
+            feature = create_city_geojson(code, cities[code], citylist)
+            collection.append(feature)
+
+    with open('geojson/22.json', 'w') as f:
+        features = geojson.FeatureCollection(collection)
+        json_str = geojson.dumps(features, ensure_ascii=False)
+        f.write(json_str.encode('utf-8'))
 
 def append_geometry(cities, code, feature):
     if not code in cities:
@@ -95,6 +102,7 @@ def create_city_geojson(code, polygons, citylist):
         json_str = geojson.dumps(feature, ensure_ascii=False)
         f.write(json_str.encode('utf-8'))
 
+    return feature
 
 if __name__ == '__main__':
     main()
