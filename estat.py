@@ -9,19 +9,22 @@ list_url = 'http://e-stat.go.jp/SG2/eStatGIS/Service.asmx/GetDownloadStep4ListTo
 file_url = 'http://e-stat.go.jp/SG2/eStatGIS/downloadfile.ashx'
 
 def get_geojson(code):
-    id = get_id(code)
-    filename = download_file(code, id)
-    path = unzip(filename)
-    convert_geojson(path, code)
+    filename = 'data/census-2010-' + code + '.zip'
+    if not os.path.exists(filename):
+        id = get_id(code)
+        download_file(code, id)
 
+    path = unzip(filename)
+    geojson = convert_geojson(path, code)
+    return geojson
 
 def download_file(code, id):
     payload = {
         'state': '',
-        'pdf': 0,
+        'pdf': '0',
         'id': id,
         'cmd': 'D001',
-        'type': 5,
+        'type': '5',
         'tcode': 'A002005212010',
         'acode': '',
         'ccode': code
@@ -62,8 +65,8 @@ def unzip(filename):
     if not os.path.exists(path):
         os.mkdir(path)
 
-    zfile = zipfile.ZipFile(filename)
-    zfile.extractall(path)
+        zfile = zipfile.ZipFile(filename)
+        zfile.extractall(path)
 
     return path
 
@@ -74,6 +77,7 @@ def convert_geojson(path, code):
     os.system('ogr2ogr -f GeoJSON ' + output + ' ' + input)
 
     print 'geojson', output
+    return output
 
 if __name__ == '__main__':
     get_geojson('01484')
