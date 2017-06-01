@@ -9,18 +9,27 @@ import shapely.ops
 import citycode
 import estat
 
+citylist = citycode.getlist()
+
+def split01484(area_name):
+    if area_name[2:4] == u'焼尻' or area_name[2:4] == u'天売':
+        return '0148402' # 天売焼尻
+    else:
+        return '0148401' # 羽幌町
+
+split_areas = [
+    ['01484', split01484],
+]
 
 def main():
-    #citylist = citycode.getlist()
-
-    #cities = load_geojson(citylist)
-    #output_geojson(cities, citylist)
-
-    geojson = estat.get_geojson('01484')
-    load_geojson(geojson)
+    for area in split_areas:
+        geojson = estat.get_geojson(area[0])
+        load_geojson(geojson, area[1])
 
 
-def load_geojson(filename):
+
+
+def load_geojson(filename, split_func):
     with open(filename) as f:
         data = json.loads(f.read(), 'utf-8')
         areas = {}
@@ -33,30 +42,32 @@ def load_geojson(filename):
             
             city_name = feature['properties']['CSS_NAME']
             area_name = feature['properties']['MOJI']
-            area_code = feature['properties']['KIHON1']
 
-            print area_name, area_code
+            print area_name
+            code = split_func(area_name)
+            append_geometry(areas, code, feature)
+
+        output_geojson(areas)
 
 
-
-
-def append_geometry(cities, code, feature):
-    if not code in cities:
-        cities[code] = []
+def append_geometry(areas, code, feature):
+    if not code in areas:
+        areas[code] = []
 
     poly = shapely.geometry.asShape(feature['geometry'])
-    cities[code].append(poly)
+    areas[code].append(poly)
 
 
-def output_geojson(city_data, code, citylist):
-    feature = create_city_geojson(code, city_data, citylist[code])
+def output_geojson(areas):
+    for code in areas.keys():
+        feature = create_city_geojson(code, areas[code], citylist[code])
 
 
 def create_city_geojson(code, polygons, meta):
     geometry = shapely.ops.cascaded_union(polygons)
     feature = geojson.Feature(geometry=geometry, properties=meta)
 
-    with open('geojson/' + code + '.json', 'w') as f:
+    with open('geojson-split/' + code + '.json', 'w') as f:
         json_str = geojson.dumps(feature, ensure_ascii=False)
         f.write(json_str.encode('utf-8'))
 
