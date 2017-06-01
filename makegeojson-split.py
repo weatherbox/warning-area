@@ -49,6 +49,25 @@ def split01346(name, code):
     else:
         return '0134601' # 八雲町八雲
 
+def split04421(name, code):
+    seibu = [u'宮床', u'吉岡', u'吉田']
+    if name[:2] in seibu or code == '0090' or code == '0060':
+        return '0442102' # 大和町西部
+    else:
+        return '0442101' # 大和町東部
+
+def split04215(name, code):
+    if name[:3] == u'岩出山' or name[:2] == u'鳴子':
+        return '0421502' # 大崎市西部
+    else:
+        return '0421501' # 大崎市東部
+
+def split04213(name, code):
+    west = [u'一迫', u'鶯沢', u'栗駒', u'花山']
+    if name[:2] in west:
+        return '0421302' # 栗原市西部
+    else:
+        return '0421301' # 栗原市東部
 
 
 split_areas = [
@@ -58,10 +77,10 @@ split_areas = [
     #['01233', split01233],
     #['01601', split01601],
     #['01346', split01346],
+    #['04421', split04421],
+    #['04215', split04215],
+    ['04213', split04213],
 ]
-
-
-
 
 def main():
     for area in split_areas:
@@ -168,7 +187,7 @@ def create_city_geojson(code, polygons, meta):
     return feature
 
 if __name__ == '__main__':
-    #main()
-    split_sendai()
+    main()
+    #split_sendai()
 
 
