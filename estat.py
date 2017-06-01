@@ -8,11 +8,12 @@ import os
 list_url = 'http://e-stat.go.jp/SG2/eStatGIS/Service.asmx/GetDownloadStep4ListTokeiTag'
 file_url = 'http://e-stat.go.jp/SG2/eStatGIS/downloadfile.ashx'
 
-def get(code):
+def get_geojson(code):
     id = get_id(code)
     filename = download_file(code, id)
     path = unzip(filename)
-    print path
+    convert_geojson(path, code)
+
 
 def download_file(code, id):
     payload = {
@@ -28,6 +29,8 @@ def download_file(code, id):
     req = requests.post(file_url, data=payload, stream=True)
 
     filename = 'data/census-2010-' + code + '.zip'
+    print 'download', filename
+
     with open(filename, 'wb') as f:
         for chunk in req.iter_content(chunk_size=1024):
             if chunk:
@@ -53,16 +56,26 @@ def get_id(code):
         if type == '5':
             return id
 
+
 def unzip(filename):
     path = filename[:-4]
-    os.mkdir(path)
+    if not os.path.exists(path):
+        os.mkdir(path)
 
     zfile = zipfile.ZipFile(filename)
     zfile.extractall(path)
 
     return path
 
+
+def convert_geojson(path, code):
+    output = path + '/' + code + '.json'
+    input = path + '/h22ka' + code + '.shp'
+    os.system('ogr2ogr -f GeoJSON ' + output + ' ' + input)
+
+    print 'geojson', output
+
 if __name__ == '__main__':
-    get('01484')
+    get_geojson('01484')
 
 
