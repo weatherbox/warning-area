@@ -70,6 +70,12 @@ def split04213(name, code):
         return '0421301' # 栗原市東部
 
 
+def split29207(name, code):
+    if name[:3] == u'大塔町':
+        return '2920702' # 五條市南部
+    else:
+        return '2920701' # 五條市北部
+
 def split30206(name, code):
     if name is None: # 無人島? 
         return '3020601' # 田辺
@@ -95,7 +101,8 @@ split_areas = [
     #['04215', split04215],
     #['04213', split04213],
 
-    ['30206', split30206],
+    ['29207', split29207],
+    #['30206', split30206],
 ]
 
 def main():
