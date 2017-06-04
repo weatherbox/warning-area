@@ -78,6 +78,7 @@ def split23211(name, code):
         return '2321101' # 豊田市西部
 
 def split25201(name, code):
+    # xxx: not all
     north = [u'小野', u'葛川', u'木戸', u'小松', u'和邇', u'朝日', u'水明', u'湖青']
     if name[:2] in north or name[:3] == u'伊香立':
         return '2520102' # 大津市北部
@@ -104,6 +105,14 @@ def split30206(name, code):
     else:
         return '3020601' # 田辺
 
+def split31201(name, code):
+    south = [u'河原町', u'用瀬町', u'佐治町']
+    if name[:3] in south:
+        return '3120102' # 鳥取市南部
+    else:
+        return '3120101' # 鳥取市北部
+
+
 split_areas = [
     #['01484', split01484],
     #['01206', split01206],
@@ -115,10 +124,11 @@ split_areas = [
     #['04215', split04215],
     #['04213', split04213],
 
-    ['23211', split23211],
+    #['23211', split23211],
     #['25201', split25201],
     #['29207', split29207],
     #['30206', split30206],
+    ['31201', split31201],
 ]
 
 def main():
