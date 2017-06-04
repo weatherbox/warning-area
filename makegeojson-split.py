@@ -70,6 +70,7 @@ def split04213(name, code):
         return '0421301' # 栗原市東部
 
 
+
 def split23211(name, code):
     # source: https://ja.wikipedia.org/wiki/%E8%B1%8A%E7%94%B0%E5%B8%82%E3%81%AE%E7%94%BA%E5%90%8D%E3%81%AE%E4%B8%80%E8%A6%A7#.E8.B6.B3.E5.8A.A9.E5.9C.B0.E5.8C.BA
     if int(code) >= 3290:
@@ -112,6 +113,17 @@ def split31201(name, code):
     else:
         return '3120101' # 鳥取市北部
 
+def split36207(name, code):
+    if name == u'木屋平':
+        return '3620702' # 美馬市木屋平
+    else:
+        return '3620701' # 美馬市脇・美馬・穴吹
+
+def split36468(name, code):
+    if name == u'一宇':
+        return '3646802' # つるぎ町一宇
+    else:
+        return '3646801' # つるぎ町半田・貞光
 
 split_areas = [
     #['01484', split01484],
@@ -128,7 +140,9 @@ split_areas = [
     #['25201', split25201],
     #['29207', split29207],
     #['30206', split30206],
-    ['31201', split31201],
+    #['31201', split31201],
+    #['36207', split36207],
+    ['36468', split36468],
 ]
 
 def main():
@@ -187,6 +201,31 @@ def split0410001(name, code): # 宮城野区, 若林区
 
 def split0410002(name, code): # 泉区
     return '0410002' # 仙台市西部
+
+
+def split_shizuoka():
+    areas = {}
+
+    geojson1 = estat.get_geojson('22101') # 葵区
+    load_geojson(geojson1, split22101, areas)
+
+    #geojson2 = estat.get_geojson('22102')
+    #load_geojson(geojson2, lambda x,y: '2210001', areas)
+
+    #geojson3 = estat.get_geojson('22103')
+    #load_geojson(geojson3, lambda x,y: '2210001', areas)
+
+    output_geojson(areas)
+
+
+def split22101(name, code):
+    # xxx: not all
+    north = [u'相淵', u'相俣', u'赤沢', u'井川', u'岩崎', u'有東木', u'梅ヶ島', u'大沢', u'大間', u'奥池ヶ谷', u'奥仙俣', u'落合', u'鍵穴', u'柿島', u'上落合', u'上坂本', u'桂山', u'崩野', u'口坂本', u'口仙俣', u'黒俣', u'小河内', u'腰越', u'小島', u'坂ノ上', u'坂本', u'杉尾', u'内匠', u'田代', u'寺島', u'渡', u'栃沢', u'長熊', u'中沢', u'長妻田', u'中平', u'楢尾', u'入島', u'日向', u'平野', u'昼居渡', u'森腰', u'諸子沢', u'八草', u'湯の島', u'油野', u'横沢', u'横山', u'蕨野']
+
+    if name in north:
+        return '2210002' # 静岡市北部
+    else:
+        return '2210001' # 静岡市南部
 
 
 
@@ -248,5 +287,6 @@ def create_city_geojson(code, polygons, meta):
 if __name__ == '__main__':
     main()
     #split_sendai()
+    #split_shizuoka()
 
 
