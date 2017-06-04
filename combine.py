@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import json
 import codecs
-import os
+import os, sys
 
 import geojson
 import shapely.geometry
@@ -63,5 +63,5 @@ def create_city_geojson(code, polygons, citylist):
     return feature
 
 if __name__ == '__main__':
-    main('04')
+    main(sys.argv[1])
 

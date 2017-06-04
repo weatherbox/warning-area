@@ -70,6 +70,20 @@ def split04213(name, code):
         return '0421301' # 栗原市東部
 
 
+def split30206(name, code):
+    if name is None: # 無人島? 
+        return '3020601' # 田辺
+    elif name[:2] == u'龍神':
+        return '3020602' # 龍神
+    elif name[:3] == u'中辺路':
+        return '3020603' # 中辺路
+    elif name[:2] == u'大塔':
+        return '3020604' # 大塔 xxx
+    elif name[:2] == u'本宮':
+        return '3020605' # 本宮
+    else:
+        return '3020601' # 田辺
+
 split_areas = [
     #['01484', split01484],
     #['01206', split01206],
@@ -79,7 +93,9 @@ split_areas = [
     #['01346', split01346],
     #['04421', split04421],
     #['04215', split04215],
-    ['04213', split04213],
+    #['04213', split04213],
+
+    ['30206', split30206],
 ]
 
 def main():
@@ -155,7 +171,7 @@ def load_geojson(filename, split_func, areas):
             area_name = feature['properties']['MOJI']
             area_code = feature['properties']['KIHON1']
 
-            if area_name[-4:] == u'（湖面）':
+            if area_name is not None and area_name[-4:] == u'（湖面）':
                 continue
 
             print area_name, area_code

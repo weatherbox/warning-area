@@ -3,7 +3,7 @@ import requests
 import json
 import zipfile
 import re
-import os
+import os, sys
 
 list_url = 'http://e-stat.go.jp/SG2/eStatGIS/Service.asmx/GetDownloadStep4ListTokeiTag'
 file_url = 'http://e-stat.go.jp/SG2/eStatGIS/downloadfile.ashx'
@@ -80,6 +80,6 @@ def convert_geojson(path, code):
     return output
 
 if __name__ == '__main__':
-    get_geojson('01484')
+    get_geojson(sys.argv[1])
 
 
