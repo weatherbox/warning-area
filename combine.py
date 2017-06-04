@@ -38,6 +38,7 @@ def load_geojson(code, citylist):
             # qgis作成geojson
             polygons = []
             for feature in data['features']:
+                if feature['geometry']['type'] == 'GeometryCollection': continue
                 poly = shapely.geometry.asShape(feature['geometry'])
                 polygons.append(poly)
                 
