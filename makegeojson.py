@@ -36,7 +36,8 @@ def load_geojson(citylist):
             #append_geometry(cities, code, feature)
 
             if jma_code in citylist:
-                append_geometry(cities, jma_code, feature)
+                #append_geometry(cities, jma_code, feature)
+                pass
 
             else:
                 parent_code = get_parent_code(str(code))
@@ -72,7 +73,7 @@ def get_parent_code(code):
             return '2213001' # 浜松市南部
 
     else: # first designated city
-        code[:3] + '0000'
+        return code[:3] + '0000'
 
 
 def output_geojson(cities, citylist):
@@ -103,7 +104,7 @@ def create_city_geojson(code, polygons, citylist):
     feature = geojson.Feature(geometry=geometry, properties=citylist[code])
 
     pref = code[:2]
-    dir = 'geojson/' + pref
+    dir = 'geojson3/' + pref
     if not os.path.exists(dir): os.mkdir(dir)
 
     with open(dir + '/' + code + '.geojson', 'w') as f:
