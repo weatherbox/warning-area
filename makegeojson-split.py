@@ -69,7 +69,18 @@ def split04213(name, code):
     else:
         return '0421301' # 栗原市東部
 
+def split07203(name, code):
+    if name[:2] == u'湖南':
+        return '0720302' # 郡山市湖南
+    else:
+        return '0720301' # 郡山市
 
+def split07344(name, code):
+    yumoto = [u'大字田良', u'大字羽鳥', u'大字湯本']
+    if name[:4] in yumoto:
+        return '0734402' # 天栄町湯本
+    else:
+        return '0734401' # 天栄町
 
 def split23211(name, code):
     # source: https://ja.wikipedia.org/wiki/%E8%B1%8A%E7%94%B0%E5%B8%82%E3%81%AE%E7%94%BA%E5%90%8D%E3%81%AE%E4%B8%80%E8%A6%A7#.E8.B6.B3.E5.8A.A9.E5.9C.B0.E5.8C.BA
@@ -135,6 +146,8 @@ split_areas = [
     #['04421', split04421],
     #['04215', split04215],
     #['04213', split04213],
+    #['07203', split07203],
+    ['07344', split07344],
 
     #['23211', split23211],
     #['25201', split25201],
@@ -142,7 +155,7 @@ split_areas = [
     #['30206', split30206],
     #['31201', split31201],
     #['36207', split36207],
-    ['36468', split36468],
+    #['36468', split36468],
 ]
 
 def main():
