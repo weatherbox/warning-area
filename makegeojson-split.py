@@ -82,6 +82,19 @@ def split07344(name, code):
     else:
         return '0734401' # 天栄町
 
+def split20202(name, code):
+    if name[:2] == u'安曇' or name[:2] == u'奈川':
+        return '2020202' # 乗鞍上高地
+    else:
+        return '2020201' # 松本市
+
+def split20215(name, code):
+    narakawa = [u'奈良', u'木曽', u'贄川']
+    if name[2:4] in narakawa:
+        return '2021502' # 楢川
+    else:
+        return '2021501' # 塩尻
+
 def split23211(name, code):
     # source: https://ja.wikipedia.org/wiki/%E8%B1%8A%E7%94%B0%E5%B8%82%E3%81%AE%E7%94%BA%E5%90%8D%E3%81%AE%E4%B8%80%E8%A6%A7#.E8.B6.B3.E5.8A.A9.E5.9C.B0.E5.8C.BA
     if int(code) >= 3290:
@@ -147,7 +160,10 @@ split_areas = [
     #['04215', split04215],
     #['04213', split04213],
     #['07203', split07203],
-    ['07344', split07344],
+    #['07344', split07344],
+    
+    #['20202', split20202],
+    ['20215', split20215],
 
     #['23211', split23211],
     #['25201', split25201],
