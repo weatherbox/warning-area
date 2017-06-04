@@ -12,9 +12,13 @@ import citycode
 
 def main(pref):
     citylist = citycode.getlist()
-    codes = [c for c in citylist.keys() if c[:2] == pref]
 
-    print codes
+    if not pref == 'all':
+        codes = [c for c in citylist.keys() if c[:2] == pref]
+        print codes
+
+    else:
+        codes = citylist.keys()
 
     collection = []
 
