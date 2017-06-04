@@ -70,8 +70,15 @@ def split04213(name, code):
         return '0421301' # 栗原市東部
 
 
+def split23211(name, code):
+    # source: https://ja.wikipedia.org/wiki/%E8%B1%8A%E7%94%B0%E5%B8%82%E3%81%AE%E7%94%BA%E5%90%8D%E3%81%AE%E4%B8%80%E8%A6%A7#.E8.B6.B3.E5.8A.A9.E5.9C.B0.E5.8C.BA
+    if int(code) >= 3290:
+        return '2321102' # 豊田市東部
+    else:
+        return '2321101' # 豊田市西部
+
 def split25201(name, code):
-    north = [u'小野', u'葛川', u'木戸', u'小松', u'和邇']
+    north = [u'小野', u'葛川', u'木戸', u'小松', u'和邇', u'朝日', u'水明', u'湖青']
     if name[:2] in north or name[:3] == u'伊香立':
         return '2520102' # 大津市北部
     else:
@@ -108,7 +115,8 @@ split_areas = [
     #['04215', split04215],
     #['04213', split04213],
 
-    ['25201', split25201],
+    ['23211', split23211],
+    #['25201', split25201],
     #['29207', split29207],
     #['30206', split30206],
 ]
@@ -176,6 +184,9 @@ def load_geojson(filename, split_func, areas):
     with open(filename) as f:
         data = json.loads(f.read(), 'utf-8')
 
+        sort = False
+        codes = {}
+
         # append splited polygons
         for feature in data['features']:
 
@@ -189,9 +200,16 @@ def load_geojson(filename, split_func, areas):
             if area_name is not None and area_name[-4:] == u'（湖面）':
                 continue
 
-            print area_name, area_code
-            code = split_func(area_name, area_code)
-            append_geometry(areas, code, feature)
+            if not sort:
+                print area_name, area_code
+                code = split_func(area_name, area_code)
+                append_geometry(areas, code, feature)
+            else:
+                codes[area_code] = [area_name, feature]
+
+        if sort:
+            for code in sorted(codes.keys()):
+                print code, codes[code][0]
 
 
 def append_geometry(areas, code, feature):
