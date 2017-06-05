@@ -58,13 +58,16 @@ map.on("load", function() {
 		"filter": ["==", "code", ""]
 	});
 
-	map.on('click', 'warning-area', function (e) {
+	map.on('click', 'warning-area', select);
+	map.on('touchend', 'warning-area', select);
+
+	function select (e) {
 		map.getCanvas().style.cursor = 'pointer';
 		console.log(e);
 
 		var code = e.features[0].properties.code;
 		map.setFilter("selected-area", ["==", "code", code]);
-	});
+	}
 
 	map.on('mousemove', function(e) {
 		var features = map.queryRenderedFeatures(e.point, { layers: ['warning-area'] });
