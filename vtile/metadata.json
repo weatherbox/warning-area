@@ -1,0 +1,12 @@
+{
+    "name": "vtile1",
+    "description": "vtile1",
+    "version": "2",
+    "minzoom": "0",
+    "maxzoom": "14",
+    "center": "135.977783,33.660353,14",
+    "bounds": "122.933653,20.422746,153.986844,45.526474",
+    "type": "overlay",
+    "format": "pbf",
+    "json": "{\"vector_layers\": [ { \"id\": \"allgeojson\", \"description\": \"\", \"minzoom\": 0, \"maxzoom\": 14, \"fields\": {\"code\": \"String\", \"distlictCode\": \"String\", \"distlictName\": \"String\", \"divisionCode\": \"String\", \"divisionName\": \"String\", \"name\": \"String\", \"prefCode\": \"String\", \"prefName\": \"String\"} } ] }"
+}
