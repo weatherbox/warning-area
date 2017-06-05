@@ -51,6 +51,34 @@ def getarealist():
 
         return area
 
+
+def getdivisionlist():
+    arealist = getarealist()
+
+    with codecs.open('jma-definition/CityCode.csv', encoding='utf-8') as f:
+        f.readline() # header
+        data = {}
+
+        for line in f:
+            row = line.split(',')
+
+            if row[5] == '1': # 気象警報で使用
+
+                citycode = str(row[0])
+                dcode = str(row[4])
+
+                if dcode in data:
+                    data[dcode]['codes'].append(citycode)
+
+                else:
+                    data[dcode] = copy.deepcopy(arealist[dcode])
+                    data[dcode]['codes'] = [citycode]
+
+        return data
+
+
+
+
 if __name__ == '__main__':
     cities = getlist()
     for l in cities.keys():
