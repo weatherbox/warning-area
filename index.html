@@ -23,6 +23,10 @@ var map = new mapboxgl.Map({
     center: [136.6, 35.5]
 });
 
+var popup = new mapboxgl.Popup({
+	closeButton: false
+});
+
 map.on("load", function() {
 	map.addSource("vtile", {
 		"type": "vector",
@@ -36,17 +40,45 @@ map.on("load", function() {
 		"type": "fill",
 		"source": "vtile",
 		"source-layer": "allgeojson",
-		'paint': {
-			'fill-color': 'rgba(126, 199, 216, 0.4)',
-			'fill-outline-color': 'rgba(126, 199, 216, 1)'
+		"paint": {
+			"fill-color": "rgba(126, 199, 216, 0.4)",
+			"fill-outline-color": "rgba(0, 84, 153, 0.7)"
 		}
 	});
 
+	map.addLayer({
+		"id": "selected-area",
+		"type": "fill",
+		"source": "vtile",
+		"source-layer": "allgeojson",
+		"paint": {
+			"fill-color": "rgba(245, 143, 152, 0.4)",
+			"fill-outline-color": "rgba(245, 143, 152, 0.7)"
+		},
+		"filter": ["==", "code", ""]
+	});
+
 	map.on('click', 'warning-area', function (e) {
+		map.getCanvas().style.cursor = 'pointer';
 		console.log(e);
-		new mapboxgl.Popup()
-			.setLngLat(e.lngLat)
-			.setHTML(e.features[0].properties.name)
+
+		var code = e.features[0].properties.code;
+		map.setFilter("selected-area", ["==", "code", code]);
+	});
+
+	map.on('mousemove', function(e) {
+		var features = map.queryRenderedFeatures(e.point, { layers: ['warning-area'] });
+		map.getCanvas().style.cursor = (features.length) ? 'crosshair' : '';
+
+		if (!features.length) {
+			popup.remove();
+			return;
+		}
+
+		var feature = features[0];
+
+		popup.setLngLat(e.lngLat)
+			.setText(feature.properties.name)
 			.addTo(map);
 	});
 });
