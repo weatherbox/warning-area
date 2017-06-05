@@ -18,7 +18,7 @@
 mapboxgl.accessToken = 'pk.eyJ1IjoidGF0dGlpIiwiYSI6ImNqMWFrZ3ZncjAwNmQzM3BmazRtNngxam8ifQ.DNMc6j7E4Gh7UkUAaEAPxA';
 var map = new mapboxgl.Map({
     container: 'map',
-    style: 'mapbox://styles/mapbox/light-v9',
+    style: 'mapbox://styles/tattii/cj3jrmgsp002i2rt50tobxo27',
     zoom: 5,
     center: [136.6, 35.5]
 });
@@ -28,19 +28,30 @@ map.on("load", function() {
 		"type": "vector",
 		"minzoom": 0,
 		"maxzoom": 10,
-		"tiles": ["http://localhost:10080/weatherbox/warning-area/vtile/{z}/{x}/{y}.pbf"]
+		"tiles": ["https://s3-ap-northeast-1.amazonaws.com/vector-tile/warning-area/{z}/{x}/{y}.pbf"]
 	});
 
 	map.addLayer({
 		"id": "warning-area",
-		"type": "line",
+		"type": "fill",
 		"source": "vtile",
-		"source-layer": "allgeojson"
+		"source-layer": "allgeojson",
+		'paint': {
+			'fill-color': 'rgba(126, 199, 216, 0.4)',
+			'fill-outline-color': 'rgba(126, 199, 216, 1)'
+		}
+	});
+
+	map.on('click', 'warning-area', function (e) {
+		console.log(e);
+		new mapboxgl.Popup()
+			.setLngLat(e.lngLat)
+			.setHTML(e.features[0].properties.name)
+			.addTo(map);
 	});
 });
 
 
-map.addControl(new mapboxgl.NavigationControl());
 </script>
 
 </body>
