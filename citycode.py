@@ -93,18 +93,18 @@ def getdistlictlist():
                 dcode = str(row[4])
                 code = arealist[dcode]['distlictCode']
 
-                if dcode in data:
-                    codelist[dcode].append(citycode)
+                if code in data:
+                    codelist[code].append(citycode)
 
                 else:
                     d = arealist[dcode]
-                    data[dcode] = {
+                    data[code] = {
                         'distlictCode': d['distlictCode'],
                         'distlictName': d['distlictName'],
                         'prefCode': d['prefCode'],
                         'prefName': d['prefName'],
                     }
-                    codelist[dcode] = [citycode]
+                    codelist[code] = [citycode]
 
         return data, codelist
 
@@ -125,16 +125,16 @@ def getpreflist():
                 dcode = str(row[4])
                 code = arealist[dcode]['distlictCode']
 
-                if dcode in data:
-                    codelist[dcode].append(citycode)
+                if code in data:
+                    codelist[code].append(citycode)
 
                 else:
                     d = arealist[dcode]
-                    data[dcode] = {
+                    data[code] = {
                         'prefCode': d['prefCode'],
                         'prefName': d['prefName'],
                     }
-                    codelist[dcode] = [citycode]
+                    codelist[code] = [citycode]
 
         return data, codelist
 
