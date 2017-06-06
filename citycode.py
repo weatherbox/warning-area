@@ -58,26 +58,85 @@ def getdivisionlist():
     with codecs.open('jma-definition/CityCode.csv', encoding='utf-8') as f:
         f.readline() # header
         data = {}
+        codelist = {}
 
         for line in f:
             row = line.split(',')
 
             if row[5] == '1': # 気象警報で使用
-
                 citycode = str(row[0])
                 dcode = str(row[4])
 
                 if dcode in data:
-                    data[dcode]['codes'].append(citycode)
+                    codelist[dcode].append(citycode)
 
                 else:
                     data[dcode] = copy.deepcopy(arealist[dcode])
-                    data[dcode]['codes'] = [citycode]
+                    codelist[dcode] = [citycode]
 
-        return data
+        return data, codelist
 
 
+def getdistlictlist():
+    arealist = getarealist()
 
+    with codecs.open('jma-definition/CityCode.csv', encoding='utf-8') as f:
+        f.readline() # header
+        data = {}
+        codelist = {}
+
+        for line in f:
+            row = line.split(',')
+
+            if row[5] == '1': # 気象警報で使用
+                citycode = str(row[0])
+                dcode = str(row[4])
+                code = arealist[dcode]['distlictCode']
+
+                if dcode in data:
+                    codelist[dcode].append(citycode)
+
+                else:
+                    d = arealist[dcode]
+                    data[dcode] = {
+                        'distlictCode': d['distlictCode'],
+                        'distlictName': d['distlictName'],
+                        'prefCode': d['prefCode'],
+                        'prefName': d['prefName'],
+                    }
+                    codelist[dcode] = [citycode]
+
+        return data, codelist
+
+
+def getpreflist():
+    arealist = getarealist()
+
+    with codecs.open('jma-definition/CityCode.csv', encoding='utf-8') as f:
+        f.readline() # header
+        data = {}
+        codelist = {}
+
+        for line in f:
+            row = line.split(',')
+
+            if row[5] == '1': # 気象警報で使用
+                citycode = str(row[0])
+                dcode = str(row[4])
+                code = arealist[dcode]['distlictCode']
+
+                if dcode in data:
+                    codelist[dcode].append(citycode)
+
+                else:
+                    d = arealist[dcode]
+                    data[dcode] = {
+                        'prefCode': d['prefCode'],
+                        'prefName': d['prefName'],
+                    }
+                    codelist[dcode] = [citycode]
+
+        return data, codelist
 
 if __name__ == '__main__':
     cities = getlist()

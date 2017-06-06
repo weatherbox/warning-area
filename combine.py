@@ -78,32 +78,33 @@ def load_feature(file):
         return geojson.Feature(geometry=data['geometry'], properties=data['properties'])
 
 def create_division_geojson():
-    divisionlist = citycode.getdivisionlist()
+    props, codes = citycode.getdivisionlist()
+    create_combined_geojson(props, codes, 'division')
+
+def create_distlict_geojson():
+    props, codes = citycode.getdistlictlist()
+    create_combined_geojson(props, codes, 'distlict')
+
+def create_pref_geojson():
+    props, codes = citycode.getpreflist()
+    create_combined_geojson(props, codes, 'pref')
+
+def create_combined_geojson(props, codes, level):
     collection = []
 
-    for dcode in divisionlist.keys():
-        division = divisionlist[dcode]
+    for code in codes.keys():
         features = []
+        print code, props[code]
 
-        print dcode, division
+        for citycode in codes[code]:
+            features.append(load_geometry(citycode))
 
-        for code in division['codes']:
-            features.append(load_geometrye(code))
-
-        feature = create_geojson(dcode, 'geojson/division', features, division)
+        feature = create_geojson(code, 'geojson/' + level, features, props[code])
         collection.append(feature)
 
 
-def create_all_division_geojson():
-    divisionlist = citycode.getdivisionlist()
-    collection = []
-
-    for dcode in divisionlist.keys():
-        collection.append(load_feature('geojson/division/' + dcode + '.geojson'))
-
     print str(len(collection)) + ' features'
-
-    with open('geojson/division-all.geojson', 'w') as f:
+    with open('geojson/' + level + '-all.geojson', 'w') as f:
         features = geojson.FeatureCollection(collection)
         json_str = geojson.dumps(features, ensure_ascii=False)
         f.write(json_str.encode('utf-8'))
@@ -111,8 +112,13 @@ def create_all_division_geojson():
 
 if __name__ == '__main__':
     if sys.argv[1] == 'division':
-        #create_division_geojson()
-        create_all_division_geojson()
+        create_division_geojson()
+
+    elif sys.argv[1] == 'distlict':
+        create_distlict_geojson()
+
+    elif sys.argv[1] == 'pref':
+        create_pref_geojson()
 
     else:
         main(sys.argv[1])
