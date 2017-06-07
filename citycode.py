@@ -123,7 +123,7 @@ def getpreflist():
             if row[5] == '1': # 気象警報で使用
                 citycode = str(row[0])
                 dcode = str(row[4])
-                code = arealist[dcode]['distlictCode']
+                code = arealist[dcode]['prefCode']
 
                 if code in data:
                     codelist[code].append(citycode)
