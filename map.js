@@ -11,7 +11,7 @@ $(function(){
 		closeButton: false
 	});
 
-	var layer = "distlict";
+	var layer = "city";
 	var selected_code = "";
 
 	map.on("load", function() {
@@ -33,6 +33,30 @@ $(function(){
 				.setText(feature.properties[name_prop])
 				.addTo(map);
 		});
+
+		map.on('click', function(e) {
+			var features = map.queryRenderedFeatures(e.point, { layers: ['warning-area-' + layer] });
+			if (!features.length) return;
+
+			map.getCanvas().style.cursor = 'pointer';
+			var code_prop = (layer == 'city') ? 'code' : layer + 'Code';
+			var code = features[0].properties[code_prop];
+			map.setFilter("selected-area-" + layer, ["==", code_prop, code]);
+		});
+	});
+
+	$("#layer-select button").on("click", function (e){
+		var $this = $(this);
+
+		// .active
+		if ($this.hasClass("active")) return;
+		$("#layer-select .active").removeClass("active");
+		$this.addClass("active");
+
+		// change layer
+		removeVtileLayer(layer);
+		layer = $this.attr("l");
+		addVtileLayer(layer);
 	});
 
 	function addVtileLayer (layer){
@@ -69,16 +93,11 @@ $(function(){
 			},
 			"filter": ["==", "code", ""]
 		});
+	}
 
-		map.on('click', 'warning-area-' + layer, select);
-		map.on('touchend', 'warning-area-' + layer, select);
-
-		function select (e) {
-			map.getCanvas().style.cursor = 'pointer';
-			console.log(e);
-
-			var code = e.features[0].properties.code;
-			map.setFilter("selected-area-" + layer, ["==", "code", code]);
-		}
+	function removeVtileLayer (layer){
+		map.removeLayer("selected-area-" + layer);
+		map.removeLayer("warning-area-" + layer);
+		map.removeSource("vtile-" + layer);
 	}
 });
