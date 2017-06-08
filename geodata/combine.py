@@ -46,7 +46,7 @@ def load_geojson(code, citylist):
                 poly = shapely.geometry.asShape(feature['geometry'])
                 polygons.append(poly)
                 
-            return create_geojson(code, 'geojson/' + code[:2], polygons, citylist[code])
+            return create_geojson(code, '../geojson/' + code[:2], polygons, citylist[code])
 
         else:
             # makegeojson.py生成
@@ -99,7 +99,7 @@ def create_combined_geojson(props, codes, level):
         for citycode in codes[code]:
             features.append(load_geometry(citycode))
 
-        feature = create_geojson(code, 'geojson/' + level, features, props[code])
+        feature = create_geojson(code, '../geojson/' + level, features, props[code])
         collection.append(feature)
 
 
