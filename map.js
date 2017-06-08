@@ -13,6 +13,7 @@ $(function(){
 
 	var layer = "city";
 	var selected;
+	var $sidebar = $("#sidebar");
 
 	map.on("load", function() {
 		addVtileLayer(layer);
@@ -38,10 +39,20 @@ $(function(){
 			var features = map.queryRenderedFeatures(e.point, { layers: ['warning-area-' + layer] });
 			if (!features.length) return;
 
+			// show selected area on map
 			map.getCanvas().style.cursor = 'pointer';
 			var code_prop = (layer == 'city') ? 'code' : layer + 'Code';
 			var code = features[0].properties[code_prop];
 			map.setFilter("selected-area-" + layer, ["==", code_prop, code]);
+
+			// show data on sidebar
+			if ($sidebar.sidebar("is hidden")){
+				$sidebar.sidebar('setting', 'transition', 'overlay')
+				.sidebar('setting', 'dimPage', false)
+				.sidebar('setting', 'closable', false)
+				.sidebar('show');
+			}
+
 			selected = { feature: features[0], code: code, code_prop: code_prop };
 		});
 	});
@@ -58,6 +69,10 @@ $(function(){
 		removeVtileLayer(layer);
 		layer = $this.attr("l");
 		addVtileLayer(layer);
+	});
+
+	$("#sidebar-close").on("click", function(){
+		$sidebar.sidebar("hide");
 	});
 
 	function addVtileLayer (layer){
