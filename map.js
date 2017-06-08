@@ -27,9 +27,10 @@ $(function(){
 			}
 
 			var feature = features[0];
+			var name_prop = (layer == 'city') ? 'name' : layer + 'Name';
 
 			popup.setLngLat(e.lngLat)
-				.setText(feature.properties.name)
+				.setText(feature.properties[name_prop])
 				.addTo(map);
 		});
 	});
