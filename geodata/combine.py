@@ -27,14 +27,14 @@ def main(pref):
 
     print str(len(collection)) + ' features'
 
-    with open('geojson/' + pref + '.geojson', 'w') as f:
+    with open('../geojson/' + pref + '.geojson', 'w') as f:
         features = geojson.FeatureCollection(collection)
         json_str = geojson.dumps(features, ensure_ascii=False)
         f.write(json_str.encode('utf-8'))
 
 
 def load_geojson(code, citylist):
-    filename = 'geojson/' + code[:2] + '/' + code + '.geojson'
+    filename = '../geojson/' + code[:2] + '/' + code + '.geojson'
     with open(filename) as f:
         data = json.loads(f.read(), 'utf-8')
 
@@ -67,7 +67,7 @@ def create_geojson(code, dir, polygons, properties):
 
 
 def load_geometry(code):
-    filename = 'geojson/' + code[:2] + '/' + code + '.geojson'
+    filename = '../geojson/' + code[:2] + '/' + code + '.geojson'
     with open(filename) as f:
         data = json.loads(f.read(), 'utf-8')
         return shapely.geometry.asShape(data['geometry'])
@@ -104,7 +104,7 @@ def create_combined_geojson(props, codes, level):
 
 
     print str(len(collection)) + ' features'
-    with open('geojson/' + level + '-all.geojson', 'w') as f:
+    with open('../geojson/' + level + '-all.geojson', 'w') as f:
         features = geojson.FeatureCollection(collection)
         json_str = geojson.dumps(features, ensure_ascii=False)
         f.write(json_str.encode('utf-8'))

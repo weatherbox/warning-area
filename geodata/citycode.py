@@ -6,7 +6,7 @@ import copy
 def getlist():
     arealist = getarealist()
 
-    with codecs.open('jma-definition/CityCode.csv', encoding='utf-8') as f:
+    with codecs.open('../jma-definition/CityCode.csv', encoding='utf-8') as f:
         f.readline() # header
         data = {}
 
@@ -33,7 +33,7 @@ def getarealist():
     division   市町村等をまとめた地域
     city       二次細分
     '''
-    with codecs.open('jma-definition/AreaForecastLocal.csv', encoding='utf-8') as f:
+    with codecs.open('../jma-definition/AreaForecastLocal.csv', encoding='utf-8') as f:
         f.readline() # header
         area = {}
 
@@ -55,7 +55,7 @@ def getarealist():
 def getdivisionlist():
     arealist = getarealist()
 
-    with codecs.open('jma-definition/CityCode.csv', encoding='utf-8') as f:
+    with codecs.open('../jma-definition/CityCode.csv', encoding='utf-8') as f:
         f.readline() # header
         data = {}
         codelist = {}
@@ -80,7 +80,7 @@ def getdivisionlist():
 def getdistlictlist():
     arealist = getarealist()
 
-    with codecs.open('jma-definition/CityCode.csv', encoding='utf-8') as f:
+    with codecs.open('../jma-definition/CityCode.csv', encoding='utf-8') as f:
         f.readline() # header
         data = {}
         codelist = {}
@@ -112,7 +112,7 @@ def getdistlictlist():
 def getpreflist():
     arealist = getarealist()
 
-    with codecs.open('jma-definition/CityCode.csv', encoding='utf-8') as f:
+    with codecs.open('../jma-definition/CityCode.csv', encoding='utf-8') as f:
         f.readline() # header
         data = {}
         codelist = {}

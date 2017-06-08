@@ -104,7 +104,7 @@ def create_city_geojson(code, polygons, citylist):
     feature = geojson.Feature(geometry=geometry, properties=citylist[code])
 
     pref = code[:2]
-    dir = 'geojson3/' + pref
+    dir = '../geojson3/' + pref
     if not os.path.exists(dir): os.mkdir(dir)
 
     with open(dir + '/' + code + '.geojson', 'w') as f:
