@@ -11,15 +11,15 @@ $(function(){
 		closeButton: false
 	});
 
-	var layer = "city";
+	var show_layer = "city";
 	var selected;
 	var $sidebar = $("#sidebar");
 
 	map.on("load", function() {
-		addVtileLayer(layer);
+		addVtileLayer(show_layer);
 
 		map.on('mousemove', function(e) {
-			var features = map.queryRenderedFeatures(e.point, { layers: ['warning-area-' + layer] });
+			var features = map.queryRenderedFeatures(e.point, { layers: ['warning-area-' + show_layer] });
 			map.getCanvas().style.cursor = (features.length) ? 'crosshair' : '';
 
 			if (!features.length) {
@@ -28,7 +28,7 @@ $(function(){
 			}
 
 			var feature = features[0];
-			var name_prop = (layer == 'city') ? 'name' : layer + 'Name';
+			var name_prop = (show_layer == 'city') ? 'name' : show_layer + 'Name';
 
 			popup.setLngLat(e.lngLat)
 				.setText(feature.properties[name_prop])
@@ -36,16 +36,20 @@ $(function(){
 		});
 
 		map.on('click', function(e) {
-			var features = map.queryRenderedFeatures(e.point, { layers: ['warning-area-' + layer] });
+			var features = map.queryRenderedFeatures(e.point, { layers: ['warning-area-' + show_layer] });
 			if (!features.length) return;
 
 			// show selected area on map
 			map.getCanvas().style.cursor = 'pointer';
-			var code_prop = (layer == 'city') ? 'code' : layer + 'Code';
+			var code_prop = (show_layer == 'city') ? 'code' : show_layer + 'Code';
 			var code = features[0].properties[code_prop];
-			map.setFilter("selected-area-" + layer, ["==", code_prop, code]);
+			map.setFilter("selected-area-" + show_layer, ["==", code_prop, code]);
 
 			// show data on sidebar
+			if (!selected || code != selected.code){
+				updateSidebar(code, features[0]);
+			}
+
 			if ($sidebar.sidebar("is hidden")){
 				$sidebar.sidebar('setting', 'transition', 'overlay')
 				.sidebar('setting', 'dimPage', false)
@@ -57,23 +61,27 @@ $(function(){
 		});
 	});
 
-	$("#layer-select button").on("click", function (e){
+	$("#layer-select button").on("click", function (){
 		var $this = $(this);
-
-		// .active
 		if ($this.hasClass("active")) return;
-		$("#layer-select .active").removeClass("active");
-		$this.addClass("active");
 
-		// change layer
-		removeVtileLayer(layer);
-		layer = $this.attr("l");
-		addVtileLayer(layer);
+		changeLayer($this.attr("l"));
 	});
 
 	$("#sidebar-close").on("click", function(){
 		$sidebar.sidebar("hide");
 	});
+
+	function changeLayer (layer){
+		// .active
+		$("#layer-select .active").removeClass("active");
+		$("#layer-select [l=" + layer +"]").addClass("active");
+
+		// change layer
+		removeVtileLayer(show_layer);
+		show_layer = layer;
+		addVtileLayer(show_layer);
+	}
 
 	function addVtileLayer (layer){
 		var source_layer = ((layer == 'city') ? '' : layer) + 'allgeojson';
@@ -125,5 +133,84 @@ $(function(){
 		map.removeLayer("selected-area-" + layer);
 		map.removeLayer("warning-area-" + layer);
 		map.removeSource("vtile-" + layer);
+	}
+
+	function updateSidebar (code, feature){
+		var name_prop = (show_layer == 'city') ? 'name' : show_layer + 'Name';
+		$("#sidebar-title h2").text(feature.properties[name_prop]);
+
+		var $bread = $("#sidebar-breadcrumb");
+		$bread.html("");
+		var layers = ['pref', 'distlict', 'division'];
+		for (var i in layers){
+			var layer = layers[i];
+			if (layer == show_layer) break;
+			if (feature.properties[layer + 'Name']){
+				$bread.append('<a class="section bread-link" layer="' + layer + '" code="' + 
+					feature.properties[layer + 'Code'] + '">' + 
+					feature.properties[layer + 'Name'] + 
+					'</a><i class="right angle icon divider"></i>'
+				);
+			}
+		}
+
+		if (show_layer == "pref"){
+			$("#sidebar-title").css("margin-top", "0px");
+		}else{
+			$("#sidebar-title").css("margin-top", "15px");
+		}
+
+		setJMALink(code);
+
+		$(".bread-link").on("click", function(){
+			var $this = $(this);
+			var code = $this.attr("code");
+			var layer = $this.attr("layer");
+			console.log(code, layer);
+
+			changeLayer(layer);
+			updateSidebar(code, feature);
+
+			//map.on('data', function(){
+			//	showArea(code);
+			//	map.off('data');
+			//});
+		});
+	}
+
+	function setJMALink (code){
+		var pcode = parseInt(code.substr(0, 2)), fcode;
+		console.log(pcode);
+		if (pcode == 1){
+			fcode = "0" + code.substr(2, 1);
+		}else if (pcode == 47){
+			fcode = 53 + parseInt(code.substr(3,1));
+		}else{
+			var jma_pref_code = [
+				8, 10, 12, 9, 11, 13, 14, 16, 15, 17, 18, 19, 20, 23, 24, 25, 26, 21, 22, 
+				28, 27, 29, 30, 34, 33, 31, 32, 35, 36,
+				39, 38, 40, 38, 45, 43, 41, 42, 44,
+				46, 47, 48, 49, 50, 51, 52
+			];
+			fcode = ("0" + jma_pref_code[pcode - 2]).slice(-2);
+		}
+
+		if (show_layer == "pref"){
+			$("#jma-link a").attr("href", "http://www.jma.go.jp/jp/warn/3" + fcode + ".html");
+		}else if (show_layer == "city"){
+			$("#jma-link a").attr("href", "http://www.jma.go.jp/jp/warn/f_" + code.substr(0, 6) + "0.html"); 
+		}else{
+			$("#jma-link a").attr("href", "http://www.jma.go.jp/jp/warn/3" + fcode + "_table.html#" + code);
+		}
+	}
+
+	function showArea (code){
+		var layer = map.getLayer('selected-area-' + show_layer);
+		var relatedFeatures = map.querySourceFeatures(layer.source, {
+			sourceLayer: layer.sourceLayer,
+			filter: layer.filter
+		});
+
+		console.log(relatedFeatures[0]);
 	}
 });
