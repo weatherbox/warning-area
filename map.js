@@ -12,7 +12,7 @@ $(function(){
 	});
 
 	var layer = "city";
-	var selected_code = "";
+	var selected;
 
 	map.on("load", function() {
 		addVtileLayer(layer);
@@ -42,6 +42,7 @@ $(function(){
 			var code_prop = (layer == 'city') ? 'code' : layer + 'Code';
 			var code = features[0].properties[code_prop];
 			map.setFilter("selected-area-" + layer, ["==", code_prop, code]);
+			selected = { feature: features[0], code: code, code_prop: code_prop };
 		});
 	});
 
@@ -82,6 +83,16 @@ $(function(){
 			}
 		});
 
+		var filter = ["==", "code", ""];
+		if (selected){
+			var code_prop = (layer == 'city') ? 'code' : layer + 'Code';
+			if (selected.feature.properties[code_prop]){
+				filter = ["==", code_prop, selected.feature.properties[code_prop]];
+			}else{
+				filter = ["==", selected.code_prop, selected.code];
+			}
+		}
+
 		map.addLayer({
 			"id": "selected-area-" + layer,
 			"type": "fill",
@@ -91,7 +102,7 @@ $(function(){
 				"fill-color": "rgba(245, 143, 152, 0.4)",
 				"fill-outline-color": "rgba(245, 143, 152, 0.7)"
 			},
-			"filter": ["==", "code", ""]
+			"filter": filter
 		});
 	}
 
