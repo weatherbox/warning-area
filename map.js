@@ -110,8 +110,13 @@ $(function(){
 		if (selected){
 			var code_prop = (layer == 'city') ? 'code' : layer + 'Code';
 			if (selected.feature && selected.feature.properties[code_prop]){
+				// upscale
 				filter = ["==", code_prop, selected.feature.properties[code_prop]];
+				if ($sidebar.sidebar("is visible")){
+					updateSidebar(selected.feature.properties[code_prop], selected.feature);
+				}
 			}else{
+				// downscale
 				filter = ["==", selected.code_prop, selected.code];
 			}
 		}
