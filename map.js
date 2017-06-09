@@ -52,7 +52,15 @@ $(function(){
 	map.on("load", function() {
 		addVtileLayer(show_layer);
 
-		map.on('mousemove', function(e) {
+		if (mobile){
+			map.on('mousemove', selectArea);
+
+		}else{
+			map.on('mousemove', hoverArea);
+			map.on('click', selectArea);
+		}
+
+		function hoverArea (e){
 			var features = map.queryRenderedFeatures(e.point, { layers: ['warning-area-' + show_layer] });
 			map.getCanvas().style.cursor = (features.length) ? 'crosshair' : '';
 
@@ -67,14 +75,14 @@ $(function(){
 			popup.setLngLat(e.lngLat)
 				.setText(feature.properties[name_prop])
 				.addTo(map);
-		});
+		}
 
-		map.on('click', function(e) {
+		function selectArea (e){
 			var features = map.queryRenderedFeatures(e.point, { layers: ['warning-area-' + show_layer] });
 			if (!features.length) return;
 
 			// show selected area on map
-			map.getCanvas().style.cursor = 'pointer';
+			if (!mobile) map.getCanvas().style.cursor = 'pointer';
 			var code_prop = (show_layer == 'city') ? 'code' : show_layer + 'Code';
 			var code = features[0].properties[code_prop];
 			map.setFilter("selected-area-" + show_layer, ["==", code_prop, code]);
@@ -92,7 +100,7 @@ $(function(){
 			}
 
 			selected = { feature: features[0], code: code, code_prop: code_prop };
-		});
+		}
 	});
 
 
