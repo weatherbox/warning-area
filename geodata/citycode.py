@@ -2,6 +2,7 @@
 import codecs
 import re
 import copy
+import json
 
 def getlist():
     arealist = getarealist()
@@ -138,10 +139,43 @@ def getpreflist():
 
         return data, codelist
 
-if __name__ == '__main__':
-    cities = getlist()
-    for l in cities.keys():
-        c = cities[l]
-        print ','.join([l, c['name'], str(c['splitArea']), c['divisionName'], c['distlictName'], c['prefName']])
 
+def createlistjson():
+    citylist = getlist()
+    jsondata = {}
+
+    for citycode in citylist.keys():
+        d = citylist[citycode]
+
+        if not d['prefCode'] in jsondata:
+            jsondata[d['prefCode']] = {
+                'name': d['prefName'],
+                'data': {}
+            }
+
+        prefdata = jsondata[d['prefCode']]['data']
+        if not d['distlictCode'] in prefdata:
+            prefdata[d['distlictCode']] = {
+                'name': d['distlictName'],
+                'data': {}
+            }
+
+        distlictdata = prefdata[d['distlictCode']]['data']
+        if not d['divisionCode'] in distlictdata:
+            distlictdata[d['divisionCode']] = {
+                'name': d['divisionName'],
+                'data': {}
+            }
+
+        divisiondata = distlictdata[d['divisionCode']]['data']
+        divisiondata[d['code']] = { 'name': d['name'] }
+
+
+    with open('list.json', 'w') as f:
+        json_str = json.dumps(jsondata, ensure_ascii=False)
+        f.write(json_str.encode('utf-8'))
+
+
+if __name__ == '__main__':
+    createlistjson()
 
