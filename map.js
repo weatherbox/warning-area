@@ -191,8 +191,10 @@ $(function(){
 
 		if (mobile){
 			if (show_layer == "pref"){
+				$bread.hide();
 				$("#sidebar-title").css("margin-bottom", "0px");
 			}else{
+				$bread.show();
 				$("#sidebar-title").css("margin-bottom", "8px");
 			}
 		}else{
@@ -207,7 +209,10 @@ $(function(){
 
 		$("#sidebar-list").html("");
 		if (show_layer != "city"){
+			$("#list-accordion").show();
 			updateSidebarList(code);
+		}else{
+			$("#list-accordion").hide();
 		}
 
 		$(".bread-link").on("click", function(){
@@ -292,6 +297,16 @@ $(function(){
 			var d = showdata[acode];
 			$list.append('<div class="item"><a class="list-link" code=' + acode + '>' + d.name + '</a></div>');
 		}
+
+		$('#list-accordion .title').html('<i class="dropdown icon"></i>' + Object.keys(showdata).length + " 区域");
+		if (mobile && layer == "division"){
+			$("#list-accordion .title").removeClass("active");
+			$("#list-accordion .content").removeClass("active");
+		}else{
+			$("#list-accordion .title").addClass("active");
+			$("#list-accordion .content").addClass("active");
+		}
+		$('.ui.accordion').accordion();
 
 		$(".list-link").on("click", function(){
 			var code = $(this).attr("code");

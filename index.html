@@ -19,8 +19,8 @@
 		#sidebar-close { position:absolute; top:5px; right:5px; display:none; }
 		#sidebar-title h2 { font-weight:500; margin-top:8px; }
 		#jma-link { font-size:12px; }
-		#sidebar-content { margin-left:15px; }
-		#sidebar-list :first-child { margin-top:30px; }
+		#sidebar-content { margin-top:15px; }
+		#sidebar-list .item { margin-left:15px; }
     </style>
 </head>
 <body>
@@ -64,8 +64,14 @@
 	</div>
 
 	<div id="sidebar-content">
-		<div id="sidebar-list" class="ui middle aligned divided list">
-
+		<div id="list-accordion" class="ui accordion" style="display:none;">
+			<div class="title">
+				<i class="dropdown icon"></i>
+				3区域
+  			</div>
+			<div class="content">
+				<div id="sidebar-list" class="ui middle aligned divided list"></div>
+			</div>
 		</div>
 	</div>
 </div>
