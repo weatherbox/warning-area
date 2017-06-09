@@ -61,6 +61,7 @@ $(function(){
 		}
 
 		function hoverArea (e){
+			if (map.isMoving()) return false;
 			var features = map.queryRenderedFeatures(e.point, { layers: ['warning-area-' + show_layer] });
 			map.getCanvas().style.cursor = (features.length) ? 'crosshair' : '';
 
