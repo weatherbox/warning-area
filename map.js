@@ -20,6 +20,27 @@ $(function(){
 		citylist = data;
 	});
 
+	// responsive
+	var mobile = $(window).width() < 640;
+	if (mobile){
+		$('.ui.dropdown').dropdown({
+			onChange: function (value){
+				changeLayer(value);
+			}
+		});
+
+	}else{ // pc
+		$("#layer-dropdown").hide();
+		$("#layer-select").show();
+
+		$("#layer-select button").on("click", function (){
+			var $this = $(this);
+			if ($this.hasClass("active")) return;
+
+			changeLayer($this.attr("l"));
+		});
+	}
+
 	map.on("load", function() {
 		addVtileLayer(show_layer);
 
@@ -66,12 +87,6 @@ $(function(){
 		});
 	});
 
-	$("#layer-select button").on("click", function (){
-		var $this = $(this);
-		if ($this.hasClass("active")) return;
-
-		changeLayer($this.attr("l"));
-	});
 
 	$("#sidebar-close").on("click", function(){
 		$sidebar.sidebar("hide");

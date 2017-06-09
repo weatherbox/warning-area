@@ -12,6 +12,8 @@
         #map { position:absolute; top:0; bottom:0; width:100%; }
 		#layer-select { position:absolute; top:15px; right:15px; z-index:100;
 			box-shadow: 0 1px 2px 0 rgba(34,36,38,.15); border-radius:.28571429rem; }
+		#layer-dropdown { position:absolute; top:15px; right:15px; z-index:100;
+			box-shadow: 0 1px 2px 0 rgba(34,36,38,.15); border-radius:.28571429rem; }
 		#layer-select button { font-weight:normal; }
 		#sidebar { padding:10px; }
 		#sidebar-close { position:absolute; top:5px; right:5px; }
@@ -26,11 +28,20 @@
 <div class="pusher">
 	<div id='map'></div>
 
-	<div id="layer-select" class="ui vertical buttons">
+	<div id="layer-select" class="ui vertical buttons" style="display:none;">
 	  <button class="ui button" l="pref">府県予報区</button>
 	  <button class="ui button" l="distlict">一次細分</button>
 	  <button class="ui button" l="division" style="font-size:10px; height:36px;">市町村等をまとめた地域</button>
 	  <button class="ui button active" l="city">二次細分</button>
+	</div>
+
+	<div id="layer-dropdown">
+		<select class="ui selection dropdown">
+			<option value="pref">府県予報区</option>
+			<option value="distlict">一次細分</option>
+			<option value="division">市町村等をまとめた地域</option>
+			<option selected="" value="city">二次細分</option>
+		</select>
 	</div>
 </div>
 
