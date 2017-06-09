@@ -14,6 +14,11 @@ $(function(){
 	var show_layer = "city";
 	var selected;
 	var $sidebar = $("#sidebar");
+	var citylist;
+
+	$.get("geodata/list.json", function (data){
+		citylist = data;
+	});
 
 	map.on("load", function() {
 		addVtileLayer(show_layer);
@@ -168,6 +173,11 @@ $(function(){
 
 		setJMALink(code);
 
+		$("#sidebar-list").html("");
+		if (show_layer != "city"){
+			updateSidebarList(code);
+		}
+
 		$(".bread-link").on("click", function(){
 			var $this = $(this);
 			var code = $this.attr("code");
@@ -219,6 +229,56 @@ $(function(){
 		}else{
 			$("#jma-link a").attr("href", "http://www.jma.go.jp/jp/warn/3" + fcode + "_table.html#" + code);
 		}
+	}
+
+	function updateSidebarList (code){
+		var $list = $("#sidebar-list");
+		var pcode = code.substr(0, 4) + "00";
+		var dcode = code.substr(0, 5) + "0";
+		var showdata, layer;
+
+		if (citylist[code]){
+			layer = "pref";
+			showdata = citylist[code].data;
+
+		}else if (citylist[pcode]){
+			if (citylist[pcode].data[code]){
+				layer = "distlict";
+				showdata = citylist[pcode].data[code].data;
+
+			}else if (citylist[pcode].data[dcode]){
+				layer = "division";
+				showdata = citylist[pcode].data[dcode].data[code].data;
+			}
+		}
+
+		if (!showdata){
+			return console.error("not found");
+		}
+
+		for (var acode in showdata){
+			var d = showdata[acode];
+			$list.append('<div class="item"><a class="list-link" code=' + acode + '>' + d.name + '</a></div>');
+		}
+
+		$(".list-link").on("click", function(){
+			var code = $(this).attr("code");
+
+			var down_layer = { pref: 'distlict', distlict: 'division', division: 'city' };
+			var l = down_layer[layer];
+
+			var feature_down = selected.feature;
+			var code_prop = (l == 'city') ? 'code' : l + 'Code';
+			var name_prop = (l == 'city') ? 'name' : l + 'Name';
+			feature_down.properties[code_prop] = code;
+			feature_down.properties[name_prop] = $(this).text();
+			selected = { feature: feature_down, code: code, code_prop: code_prop };
+
+			changeLayer(l);
+			updateSidebar(code, feature_down);
+
+			// request feature update
+		});
 	}
 
 	function showArea (code){
