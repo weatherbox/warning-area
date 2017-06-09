@@ -16,11 +16,11 @@
 			box-shadow: 0 1px 2px 0 rgba(34,36,38,.15); border-radius:.28571429rem; }
 		#layer-select button { font-weight:normal; }
 		#sidebar { padding:10px; }
-		#sidebar-close { position:absolute; top:5px; right:5px; }
-		#sidebar-title { margin-top:15px; }
-		#sidebar-title h2 { font-weight:500; }
+		#sidebar-close { position:absolute; top:5px; right:5px; display:none; }
+		#sidebar-title h2 { font-weight:500; margin-top:8px; }
 		#jma-link { font-size:12px; }
-		#sidebar-content { margin-top:30px; margin-left:15px; }
+		#sidebar-content { margin-left:15px; }
+		#sidebar-list :first-child { margin-top:30px; }
     </style>
 </head>
 <body>
@@ -45,22 +45,16 @@
 	</div>
 </div>
 
-<div id="sidebar" class="ui sidebar left menu vertical">
+<div id="sidebar" class="ui sidebar bottom menu vertical">
 	<div id="sidebar-close"><i class="remove icon grey"></i></div>
 
-
-	<div id="sidebar-breadcrumb" class="ui breadcrumb">
-		<a class="section">府県予報区</a>
-		<i class="right angle icon divider"></i>
-		<a class="section">一次細分</a>
-		<i class="right angle icon divider"></i>
-		<div class="section">市町村等をまとめた地域</div>
-		<i class="right angle icon divider"></i>
-	</div>
+	<div id="sidebar-breadcrumb-pc" class="ui breadcrumb" style="display:none;"></div>
 
 	<div id="sidebar-title">
 		<h2>細分区域</h2>
 	</div>
+
+	<div id="sidebar-breadcrumb" class="ui breadcrumb"></div>
 
 	<div class="ui divider" style="margin-bottom:20px"></div>
 

@@ -32,13 +32,21 @@ $(function(){
 	}else{ // pc
 		$("#layer-dropdown").hide();
 		$("#layer-select").show();
-
 		$("#layer-select button").on("click", function (){
 			var $this = $(this);
 			if ($this.hasClass("active")) return;
 
 			changeLayer($this.attr("l"));
 		});
+
+		$sidebar.removeClass("bottom").addClass("left");
+		$("#slider-close").show();
+		$("#sidebar-close").on("click", function(){
+			$sidebar.sidebar("hide");
+		});
+
+		$("#sidebar-breadcrumb-pc").show();
+		$("#sidebar-breadcrumb").hide();
 	}
 
 	map.on("load", function() {
@@ -88,14 +96,15 @@ $(function(){
 	});
 
 
-	$("#sidebar-close").on("click", function(){
-		$sidebar.sidebar("hide");
-	});
-
 	function changeLayer (layer){
 		// .active
-		$("#layer-select .active").removeClass("active");
-		$("#layer-select [l=" + layer +"]").addClass("active");
+		if (mobile){
+			$(".ui.dropdown").dropdown("set selected", layer);
+
+		}else{
+			$("#layer-select .active").removeClass("active");
+			$("#layer-select [l=" + layer +"]").addClass("active");
+		}
 
 		// change layer
 		removeVtileLayer(show_layer);
@@ -164,7 +173,7 @@ $(function(){
 		var name_prop = (show_layer == 'city') ? 'name' : show_layer + 'Name';
 		$("#sidebar-title h2").text(feature.properties[name_prop]);
 
-		var $bread = $("#sidebar-breadcrumb");
+		var $bread = (mobile) ? $("#sidebar-breadcrumb") : $("#sidebar-breadcrumb-pc");
 		$bread.html("");
 
 		var layers = ['pref', 'distlict', 'division'];
@@ -180,10 +189,18 @@ $(function(){
 			}
 		}
 
-		if (show_layer == "pref"){
-			$("#sidebar-title").css("margin-top", "0px");
+		if (mobile){
+			if (show_layer == "pref"){
+				$("#sidebar-title").css("margin-bottom", "0px");
+			}else{
+				$("#sidebar-title").css("margin-bottom", "8px");
+			}
 		}else{
-			$("#sidebar-title").css("margin-top", "15px");
+			if (show_layer == "pref"){
+				$("#sidebar-title").css("margin-top", "0px");
+			}else{
+				$("#sidebar-title").css("margin-top", "15px");
+			}
 		}
 
 		setJMALink(code);
@@ -205,11 +222,11 @@ $(function(){
 			var layers = ['pref', 'distlict', 'division'];
 			for (var i in layers){
 				var l = layers[i];
-				if (l == layer) break;
 				if (feature.properties[l + 'Code']){
 					feature_up.properties[l + 'Code'] = feature.properties[l + 'Code']; 
 					feature_up.properties[l + 'Name'] = feature.properties[l + 'Name']; 
 				}
+				if (l == layer) break;
 			}
 			var code_prop = (layer == 'city') ? 'code' : layer + 'Code';
 			selected = { feature: feature_up, code: code, code_prop: code_prop };
