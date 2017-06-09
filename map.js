@@ -109,7 +109,7 @@ $(function(){
 		var filter = ["==", "code", ""];
 		if (selected){
 			var code_prop = (layer == 'city') ? 'code' : layer + 'Code';
-			if (selected.feature.properties[code_prop]){
+			if (selected.feature && selected.feature.properties[code_prop]){
 				filter = ["==", code_prop, selected.feature.properties[code_prop]];
 			}else{
 				filter = ["==", selected.code_prop, selected.code];
@@ -141,6 +141,7 @@ $(function(){
 
 		var $bread = $("#sidebar-breadcrumb");
 		$bread.html("");
+
 		var layers = ['pref', 'distlict', 'division'];
 		for (var i in layers){
 			var layer = layers[i];
@@ -166,10 +167,22 @@ $(function(){
 			var $this = $(this);
 			var code = $this.attr("code");
 			var layer = $this.attr("layer");
-			console.log(code, layer);
 
 			changeLayer(layer);
 			updateSidebar(code, feature);
+
+			var feature_up = { properties: {} };
+			var layers = ['pref', 'distlict', 'division'];
+			for (var i in layers){
+				var l = layers[i];
+				if (l == layer) break;
+				if (feature.properties[l + 'Code']){
+					feature_up.properties[l + 'Code'] = feature.properties[l + 'Code']; 
+					feature_up.properties[l + 'Name'] = feature.properties[l + 'Name']; 
+				}
+			}
+			var code_prop = (layer == 'city') ? 'code' : layer + 'Code';
+			selected = { feature: feature_up, code: code, code_prop: code_prop };
 
 			//map.on('data', function(){
 			//	showArea(code);
@@ -180,7 +193,6 @@ $(function(){
 
 	function setJMALink (code){
 		var pcode = parseInt(code.substr(0, 2)), fcode;
-		console.log(pcode);
 		if (pcode == 1){
 			fcode = "0" + code.substr(2, 1);
 		}else if (pcode == 47){
