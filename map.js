@@ -80,7 +80,15 @@ $(function(){
 
 		function selectArea (e){
 			var features = map.queryRenderedFeatures(e.point, { layers: ['warning-area-' + show_layer] });
-			if (!features.length) return;
+
+			if (!features.length){
+				if (mobile){
+					map.setFilter("selected-area-" + show_layer, ["==", "", ""]);
+					selected = null;
+					$sidebar.sidebar("hide");
+				}
+				return;
+			}
 
 			// show selected area on map
 			if (!mobile) map.getCanvas().style.cursor = 'pointer';
