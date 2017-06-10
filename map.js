@@ -191,7 +191,7 @@ $(function(){
 		map.removeSource("vtile-" + layer);
 	}
 
-	function updateSidebar (code, feature){
+	function updateSidebar (code, feature, downscale){
 		var name_prop = (show_layer == 'city') ? 'name' : show_layer + 'Name';
 		$("#sidebar-title h2").text(feature.properties[name_prop]);
 
@@ -232,7 +232,7 @@ $(function(){
 		$("#sidebar-list").html("");
 		if (show_layer != "city"){
 			$("#list-accordion").show();
-			updateSidebarList(code);
+			updateSidebarList(code, downscale);
 		}else{
 			$("#list-accordion").hide();
 		}
@@ -290,7 +290,7 @@ $(function(){
 		}
 	}
 
-	function updateSidebarList (code){
+	function updateSidebarList (code, downscale){
 		var $list = $("#sidebar-list");
 		var pcode = code.substr(0, 4) + "00";
 		var dcode = code.substr(0, 5) + "0";
@@ -300,10 +300,20 @@ $(function(){
 			layer = "pref";
 			showdata = citylist[code].data;
 
+			if (downscale && citylist[code].data[code]){
+				layer = "distlict";
+				showdata = citylist[code].data[code].data;
+			}
+
 		}else if (citylist[pcode]){
 			if (citylist[pcode].data[code]){
 				layer = "distlict";
 				showdata = citylist[pcode].data[code].data;
+
+				if (downscale && citylist[pcode].data[code]){
+					layer = "division";
+					showdata = citylist[pcode].data[code].data[code].data;
+				}
 
 			}else if (citylist[pcode].data[dcode]){
 				layer = "division";
@@ -344,7 +354,7 @@ $(function(){
 			selected = { feature: feature_down, code: code, code_prop: code_prop };
 
 			changeLayer(l);
-			updateSidebar(code, feature_down);
+			updateSidebar(code, feature_down, true);
 
 			// request feature update
 		});
