@@ -40,7 +40,7 @@ $(function(){
 		});
 
 		$sidebar.removeClass("bottom").addClass("left");
-		$("#slider-close").show();
+		$("#sidebar-close").show();
 		$("#sidebar-close").on("click", function(){
 			$sidebar.sidebar("hide");
 		});
@@ -51,6 +51,7 @@ $(function(){
 
 	map.on("load", function() {
 		addVtileLayer(show_layer);
+		var zooming = false; // only pc
 
 		if (mobile){
 			map.on('mousemove', selectArea);
@@ -58,10 +59,12 @@ $(function(){
 		}else{
 			map.on('mousemove', hoverArea);
 			map.on('click', selectArea);
+			map.on('zoomstart', function (){ zooming = true; });
+			map.on('zoomend', function (){ zooming = false; });
 		}
 
 		function hoverArea (e){
-			if (map.isMoving()) return false;
+			if (map.isMoving() || zooming) return false;
 			var features = map.queryRenderedFeatures(e.point, { layers: ['warning-area-' + show_layer] });
 			map.getCanvas().style.cursor = (features.length) ? 'crosshair' : '';
 
