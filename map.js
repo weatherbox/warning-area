@@ -296,6 +296,15 @@ $(function(){
 		var dcode = code.substr(0, 5) + "0";
 		var showdata, layer;
 
+		// kagoshima
+		if (pcode == "460000") {
+			if (dcode != "460040"){
+				pcode = "460100";
+			}else{
+				pcode = "460040";
+			}
+		}
+
 		if (citylist[code]){
 			layer = "pref";
 			showdata = citylist[code].data;
