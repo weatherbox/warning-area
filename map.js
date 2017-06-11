@@ -312,19 +312,29 @@ $(function(){
 		}
 
 		if (wlayer == "division"){
-			if (citylist[pcode].data[dcode] && citylist[pcode].data[dcode].data[code]){
+			if (citylist[pcode] && citylist[pcode].data[dcode] && citylist[pcode].data[dcode].data[code]){
 				layer = "division";
 				showdata = citylist[pcode].data[dcode].data[code].data;
 
-			}else if (citylist[pcode].data[pcode] && citylist[pcode].data[pcode].data[code]){
+			}else if (citylist[pcode] && citylist[pcode].data[pcode] && citylist[pcode].data[pcode].data[code]){
 				layer = "division";
 				showdata = citylist[pcode].data[pcode].data[code].data;
+
+			}else if (citylist[dcode] && citylist[dcode].data[dcode] && citylist[dcode].data[dcode].data[code]){
+				layer = "division";
+				showdata = citylist[dcode].data[dcode].data[code].data;
 			}
 		}
 
-		if (wlayer == "distlict" && citylist[pcode].data[code]){
-			layer = "distlict";
-			showdata = citylist[pcode].data[code].data;
+		if (wlayer == "distlict"){
+			if (citylist[pcode] && citylist[pcode].data[code]){
+				layer = "distlict";
+				showdata = citylist[pcode].data[code].data;
+
+			}else if (citylist[dcode] && citylist[dcode].data[code]){
+				layer = "distlict";
+				showdata = citylist[dcode].data[code].data;
+			}
 		}
 
 		if (!showdata){
