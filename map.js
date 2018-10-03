@@ -136,13 +136,12 @@ $(function(){
 
 	function addVtileLayer (layer){
 		var source_layer = ((layer == 'city') ? '' : layer) + 'allgeojson';
-		var source_suffix = (layer == 'city') ? '' : '-' + layer;
 
 		map.addSource("vtile-" + layer, {
 			"type": "vector",
 			"minzoom": 0,
 			"maxzoom": 10,
-			"tiles": ["https://s3-ap-northeast-1.amazonaws.com/vector-tile/warning-area" + source_suffix + "/{z}/{x}/{y}.pbf"],
+		  "tiles": ["https://weatherbox.github.io/warning-area-vt/" + layer + "/{z}/{x}/{y}.pbf"],
 			"attribution": '<a href="http://nlftp.mlit.go.jp/ksj/gml/datalist/KsjTmplt-N03-v2_3.html" target="_blank">国土数値情報</a>'
 		});
 
