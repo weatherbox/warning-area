@@ -50,6 +50,13 @@ $(function(){
 	}
 
 	map.on("load", function() {
+		map.addSource("vtile", {
+			"type": "vector",
+			"minzoom": 0,
+			"maxzoom": 10,
+		  "tiles": ["https://weatherbox.github.io/warning-area-vt/v2/{z}/{x}/{y}.pbf"],
+		  "attribution": '<a href="https://www.data.jma.go.jp/developer/gis.html" target="_blank">気象庁GISデータ</a>'
+		});
 		addVtileLayer(show_layer);
 		var moving = false, zooming = false; // only pc
 
@@ -76,10 +83,8 @@ $(function(){
 			}
 
 			var feature = features[0];
-			var name_prop = (show_layer == 'city') ? 'name' : show_layer + 'Name';
-
 			popup.setLngLat(e.lngLat)
-				.setText(feature.properties[name_prop])
+				.setText(feature.properties.name)
 				.addTo(map);
 		}
 
@@ -97,7 +102,7 @@ $(function(){
 
 			// show selected area on map
 			if (!mobile) map.getCanvas().style.cursor = 'pointer';
-			var code_prop = (show_layer == 'city') ? 'code' : show_layer + 'Code';
+			var code_prop = 'code';
 			var code = features[0].properties[code_prop];
 			map.setFilter("selected-area-" + show_layer, ["==", code_prop, code]);
 
@@ -135,21 +140,11 @@ $(function(){
 	}
 
 	function addVtileLayer (layer){
-		var source_layer = ((layer == 'city') ? '' : layer) + 'allgeojson';
-
-		map.addSource("vtile-" + layer, {
-			"type": "vector",
-			"minzoom": 0,
-			"maxzoom": 10,
-		  "tiles": ["https://weatherbox.github.io/warning-area-vt/" + layer + "/{z}/{x}/{y}.pbf"],
-			"attribution": '<a href="http://nlftp.mlit.go.jp/ksj/gml/datalist/KsjTmplt-N03-v2_3.html" target="_blank">国土数値情報</a>'
-		});
-
 		map.addLayer({
 			"id": "warning-area-" + layer,
 			"type": "fill",
-			"source": "vtile-" + layer,
-			"source-layer": source_layer,
+			"source": "vtile",
+			"source-layer": layer,
 			"paint": {
 				"fill-color": "rgba(126, 199, 216, 0.4)",
 				"fill-outline-color": "rgba(0, 84, 153, 0.7)"
@@ -174,8 +169,8 @@ $(function(){
 		map.addLayer({
 			"id": "selected-area-" + layer,
 			"type": "fill",
-			"source": "vtile-" + layer,
-			"source-layer": source_layer,
+			"source": "vtile",
+			"source-layer": layer,
 			"paint": {
 				"fill-color": "rgba(245, 143, 152, 0.4)",
 				"fill-outline-color": "rgba(245, 143, 152, 0.7)"
@@ -187,24 +182,45 @@ $(function(){
 	function removeVtileLayer (layer){
 		map.removeLayer("selected-area-" + layer);
 		map.removeLayer("warning-area-" + layer);
-		map.removeSource("vtile-" + layer);
 	}
 
+  function search(code, layer) {
+    if (layer == 'pref') return [];
+
+    var codes = [];
+    for (var prefCode in citylist) {
+      var pref = citylist[prefCode];
+      codes[0] = { name: pref.name, code: prefCode, layer: 'pref' };
+      if (layer == 'distlict' && code in pref.data) return codes.slice(0, 1);
+
+      for (var distlictCode in pref.data) {
+        var distlict = pref.data[distlictCode];
+        codes[1] = { name: distlict.name, code: distlictCode, layer: 'distlict' };
+        if (layer == 'division' && code in distlict.data) return codes.slice(0, 2);
+
+        for (var divisionCode in distlict.data) {
+          var division = distlict.data[divisionCode];
+          codes[2] = { name: division.name, code: divisionCode, layer: 'division' };
+          if (code in division.data) return codes;
+        }
+      }
+    }
+
+  }
+
 	function updateSidebar (code, feature, wlayer){
-		var name_prop = (show_layer == 'city') ? 'name' : show_layer + 'Name';
+		var name_prop = 'name';
 		$("#sidebar-title h2").text(feature.properties[name_prop]);
 
 		var $bread = (mobile) ? $("#sidebar-breadcrumb") : $("#sidebar-breadcrumb-pc");
 		$bread.html("");
 
-		var layers = ['pref', 'distlict', 'division'];
-		for (var i in layers){
-			var layer = layers[i];
-			if (layer == show_layer) break;
-			if (feature.properties[layer + 'Name']){
-				$bread.append('<a class="section bread-link" layer="' + layer + '" code="' + 
-					feature.properties[layer + 'Code'] + '">' + 
-					feature.properties[layer + 'Name'] + 
+    var tree = search(code, show_layer);
+		for (var i in tree){
+			if (feature.properties['name']){
+				$bread.append('<a class="section bread-link" layer="' + tree[i].layer + '" code="' + 
+					tree[i].code + '">' + 
+					tree[i].name + 
 					'</a><i class="right angle icon divider"></i>'
 				);
 			}
@@ -254,7 +270,7 @@ $(function(){
 				}
 				if (l == layer) break;
 			}
-			var code_prop = (layer == 'city') ? 'code' : layer + 'Code';
+			var code_prop = 'code';
 			selected = { feature: feature_up, code: code, code_prop: code_prop };
 
 			//map.on('data', function(){
@@ -265,27 +281,12 @@ $(function(){
 	}
 
 	function setJMALink (code){
-		var pcode = parseInt(code.substr(0, 2)), fcode;
-		if (pcode == 1){
-			fcode = "0" + code.substr(2, 1);
-		}else if (pcode == 47){
-			fcode = 53 + parseInt(code.substr(3,1));
-		}else{
-			var jma_pref_code = [
-				8, 10, 12, 9, 11, 13, 14, 16, 15, 17, 18, 19, 20, 23, 24, 25, 26, 21, 22, 
-				28, 27, 29, 30, 34, 33, 31, 32, 35, 36,
-				39, 38, 40, 38, 45, 43, 41, 42, 44,
-				46, 47, 48, 49, 50, 51, 52
-			];
-			fcode = ("0" + jma_pref_code[pcode - 2]).slice(-2);
-		}
-
 		if (show_layer == "pref"){
-			$("#jma-link a").attr("href", "http://www.jma.go.jp/jp/warn/3" + fcode + ".html");
+			$("#jma-link a").attr("href", "https://www.jma.go.jp/bosai/warning/#area_type=offices&area_code=" + code);
 		}else if (show_layer == "city"){
-			$("#jma-link a").attr("href", "http://www.jma.go.jp/jp/warn/f_" + code.substr(0, 6) + "0.html"); 
+			$("#jma-link a").attr("href", "https://www.jma.go.jp/bosai/warning/#area_type=class20s&area_code=" + code); 
 		}else{
-			$("#jma-link a").attr("href", "http://www.jma.go.jp/jp/warn/3" + fcode + "_table.html#" + code);
+			$("#jma-link a").attr("href", "https://www.jma.go.jp/bosai/map.html?elem=all&contents=warning");
 		}
 	}
 
@@ -371,8 +372,8 @@ $(function(){
 			var l = down_layer[layer];
 
 			var feature_down = selected.feature;
-			var code_prop = (l == 'city') ? 'code' : l + 'Code';
-			var name_prop = (l == 'city') ? 'name' : l + 'Name';
+			var code_prop = 'code';
+			var name_prop = 'name';
 			feature_down.properties[code_prop] = code;
 			feature_down.properties[name_prop] = $(this).text();
 			selected = { feature: feature_down, code: code, code_prop: code_prop };
